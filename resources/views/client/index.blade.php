@@ -4,18 +4,34 @@
 
 @section('content')
 
-<div class="accordion" id="ticket_queue">
-    <div class="accordion-item">
-        <h2 class="accordion-header" id="headingOne">
-            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                Заявки в очереди
-            </button>
-        </h2>
-        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#ticket_queue">
-            <div class="accordion-body">
-                
-            </div>
-        </div>
-    </div>
-</div>
+
+<h2>
+    Ваши заявки
+</h2>
+<table class="table table-striped table-hover">
+    <thead>
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">Заголовок</th>
+            <th scope="col">Время создания</th>
+            <th scope="col">Статус</th>
+            <th scope="col">Группа</th>
+            <th scope="col">Ответственный</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($tickets as $t)
+        <tr>
+            <th scope="row"></th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+
 @endsection

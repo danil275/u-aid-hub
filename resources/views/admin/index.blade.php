@@ -1,7 +1,7 @@
-@extends('agent.base')
+@extends('base')
 
 @section('content')
-<h2>Администрирование</h2>
+<h1>Администрирование</h1>
 <div class="row">
     <div class="col-md-4">
         <div class="card">

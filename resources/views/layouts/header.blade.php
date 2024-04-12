@@ -5,7 +5,7 @@
 
             </a>
 
-            @include('layouts.default-nav')
+            @include('layouts.agent-nav')
 
             @guest
             <div class="text-end">
@@ -18,11 +18,11 @@
                     {{ auth()->user()->email }}
                 </a>
                 <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser1">
-                    <li><a class="dropdown-item" href="#">Настройки</a></li>
+                    <li><a class="dropdown-item" href="{{ route('user') }}">Настройки</a></li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>
-                    <li><a class="dropdown-item" href="#">Выход</a></li>
+                    <li><a class="dropdown-item" href="{{ route('logout') }}">Выход</a></li>
                 </ul>
             </div>
             @endauth

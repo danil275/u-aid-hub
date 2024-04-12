@@ -14,7 +14,7 @@
 <div class="text-center">
     <form class="form-signin" method="POST">
         @csrf
-        <input type="email" id="login" name="login" class="form-control mb-3" placeholder="Логин" value="{{ old('login') }}" required="" autofocus="">
+        <input type="email" id="email" name="email" class="form-control mb-3" placeholder="Логин" value="{{ old('email') }}" required="" autofocus="">
         <input type="password" name="password" id="password" class="form-control mb-3" placeholder="Пароль" required="">
 
         @if ($errors->any())

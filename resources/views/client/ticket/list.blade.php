@@ -1,7 +1,7 @@
 @extends('base')
 
 @section('content')
-<h2>Заявки</h2>
+<h1>Заявки</h1>
 <table class="table table-striped table-hover">
     <thead>
         <tr>

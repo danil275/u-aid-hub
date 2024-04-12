@@ -2,16 +2,27 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\TicketStatus;
+use App\Models\Ticket;
 use Illuminate\Http\Request;
 
-class TicketController extends Controller
+class AgentTicketController extends Controller
 {
+    const PAGINATE_PER_PAGE = 10;
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $ticketsInWork = Ticket::where("owner_id", auth()->user()->id)
+            ->paginate(self::PAGINATE_PER_PAGE, ["*"], 'ticketsInWorkPage');
+        $ticketsInQueue = Ticket::where('status', TicketStatus::New)
+            ->paginate(self::PAGINATE_PER_PAGE, ['*'], 'ticketsInQueuePage');
+        return view("agent.index", [
+            'ticketsInWork' => $ticketsInWork,
+            'ticketsInQueue' => $ticketsInQueue
+        ]);
     }
 
     /**
@@ -33,9 +44,9 @@ class TicketController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Ticket $ticket)
     {
-        //
+        return view('agent.ticket.show');
     }
 
     /**
