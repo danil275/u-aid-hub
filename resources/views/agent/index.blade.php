@@ -23,6 +23,7 @@
                             <th scope="col">Статус</th>
                             <th scope="col">Владелец</th>
                             <th scope="col">Создатель</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +35,7 @@
                             <td>{{ $t->status }}</td>
                             <td>@if($t->owner) {{ $t->owner->email }} @endif</td>
                             <td>{{ $t->email }}</td>
+                            <td><a href="{{ route('agent-show-ticket', $t) }}">Открыть</a></td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -59,6 +61,7 @@
                             <th scope="col">Статус</th>
                             <th scope="col">Владелец</th>
                             <th scope="col">Создатель</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,6 +73,7 @@
                             <td>{{ $t->status }}</td>
                             <td>@if($t->owner) {{ $t->owner->email }} @endif</td>
                             <td>{{ $t->email }}</td>
+                            <td><a href="{{ route('agent-show-ticket', $t) }}">Открыть</a></td>
                         </tr>
                         @endforeach
                     </tbody>

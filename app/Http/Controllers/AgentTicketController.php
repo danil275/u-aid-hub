@@ -2,17 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\AppRole;
 use App\Enums\TicketStatus;
+use App\Http\Requests\agent\ticket\AnswerTicketRequest;
+use App\Http\Requests\agent\ticket\CloseTicketRequest;
+use App\Models\Role;
 use App\Models\Ticket;
+use App\Services\TicketService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AgentTicketController extends Controller
 {
     const PAGINATE_PER_PAGE = 10;
 
-    /**
-     * Display a listing of the resource.
-     */
+    public function __construct(
+        protected TicketService $ticketService
+    ) {
+    }
     public function index()
     {
         $ticketsInWork = Ticket::where("owner_id", auth()->user()->id)
@@ -25,51 +32,31 @@ class AgentTicketController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Ticket $ticket)
     {
-        return view('agent.ticket.show');
+        $agents = Role::where('name', AppRole::Agent)->first()->users;
+        return view('agent.ticket.show', ['ticket' => $ticket, 'agents' => $agents]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function close(CloseTicketRequest $request, Ticket $ticket)
     {
-        //
+        $validated = $request->validated();
+
+        $this->ticketService->closeTicket($request->user(), $ticket, $validated['text']);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function answer(AnswerTicketRequest $request, Ticket $ticket)
     {
-        //
-    }
+        $validated = $request->validated();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $this->ticketService->answerToTicket($request->user(), $ticket, $validated['text']);
     }
 }

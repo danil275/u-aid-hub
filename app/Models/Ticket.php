@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Ticket extends Model
 {
@@ -22,5 +22,9 @@ class Ticket extends Model
             'escalation_response_time' => 'datetime',
             'escalation_solution_time' => 'datetime',
         ];
+    }
+
+    public function messages(): HasMany {
+        return $this->hasMany(Message::class);
     }
 }

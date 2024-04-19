@@ -38,4 +38,13 @@ class TicketService
 
         return $ticket;
     }
+
+    public function closeTicket(User $user, Ticket $ticket, string $text): void {
+
+    }
+    
+    public function answerToTicket(User $user, Ticket $ticket, string $text): void {
+
+    }
+    
 }

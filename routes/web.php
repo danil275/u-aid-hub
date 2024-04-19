@@ -35,7 +35,9 @@ Route::prefix('agent')
             ->prefix('tickets')
             ->group(function () {
                 Route::get('/', 'index')->name('agent-tickets');
-                Route::get('/{id}', 'show')->name('agent-show-ticket');
+                Route::get('/{ticket}', 'show')->name('agent-show-ticket');
+                Route::post('/{ticket}', 'answer')->name('agent-answer-ticket');
+                Route::post('/{ticket}', 'close')->name('agent-close-ticket');
                 Route::get('/new', 'create')->name('agent-create-ticket');
             });
     });
@@ -46,7 +48,7 @@ Route::prefix('client')
             ->prefix('tickets')
             ->group(function () {
                 Route::get('/', 'index')->name('tickets');
-                Route::get('/{id}', 'show');
+                Route::get('/{ticket}', 'show');
                 Route::get('/new', 'create');
             });
     });

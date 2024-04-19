@@ -5,13 +5,20 @@
 
             </a>
 
+            @can('agent')
             @include('layouts.agent-nav')
+            @endcan
+
+            @guest
+            @include('layouts.default-nav')
+            @endguest
 
             @guest
             <div class="text-end">
                 <a href="{{ route('login') }}"><button type="button" class="btn btn-outline-light me-2">Войти</button></a>
             </div>
             @endguest
+            
             @auth
             <div class="dropdown text-end">
                 <a href="#" class="d-block text-decoration-none dropdown-toggle link-light" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
