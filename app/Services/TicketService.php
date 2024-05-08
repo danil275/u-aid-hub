@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\TicketStatus;
+use App\Models\Message;
 use App\Models\Ticket;
 use App\Models\User;
 use DateTime;
@@ -29,7 +30,7 @@ class TicketService
     {
         $ticket = new Ticket();
         $ticket->email = $user->email;
-        $ticket->client = $user;
+        $ticket->client_id = $user->id;
         $ticket->title = $title;
         $ticket->text = $text;
         $ticket->escalation_time = new DateTime();
@@ -39,12 +40,28 @@ class TicketService
         return $ticket;
     }
 
-    public function closeTicket(User $user, Ticket $ticket, string $text): void {
-
+    public function closeTicket(User $user, Ticket $ticket, ?string $text): void
+    {
+        $ticket->status = TicketStatus::Close;
+        $ticket->escalation_solution_time = new DateTime();
+        $ticket->solution_notes = $text;
+        $ticket->save();
     }
-    
-    public function answerToTicket(User $user, Ticket $ticket, string $text): void {
 
+    public function answerToTicket(User $user, Ticket $ticket, string $text): void
+    {
+        $message = new Message();
+        $message->text = $text;
+        $message->user_id = $user;
+        $message->ticket_id = $ticket->id;
+        $message->save();
     }
-    
+
+    public function acceptInWork(User $user, Ticket $ticket): void
+    {
+        $ticket->owner_id = $user->id;
+        $ticket->status = TicketStatus::Open;
+        $ticket->escalation_update_time = new DateTime();
+        $ticket->save();
+    }
 }

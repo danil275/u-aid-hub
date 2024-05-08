@@ -5,6 +5,15 @@
 @section('content')
 
 <h1>Заявка №{{ $ticket->id }}</h1>
+@if($ticket->status != app\Enums\TicketStatus::Close)
+<div class="mb-3">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalCenteredScrollable">
+        Закрыть
+    </button>
+</div>
+@elseif($ticket->solution_notes)
+<div class="callout">{{$ticket->solution_notes}}</div>
+@endif
 
 <div class="card mb-4">
     <div class="card-body">
@@ -28,7 +37,7 @@
         <hr>
         <div class="row">
             <div class="col-sm-3">
-                <p class="mb-0"></p>
+                <p class="mb-0">Время создания</p>
             </div>
             <div class="col-sm-9">
                 <p class="text-muted mb-0">{{ $ticket->escalation_time->format('d.m.Y H:m') }}</p>
@@ -37,7 +46,7 @@
         <hr>
         <div class="row">
             <div class="col-sm-3">
-                <p class="mb-0"></p>
+                <p class="mb-0">Статус</p>
             </div>
             <div class="col-sm-9">
                 <p class="text-muted mb-0">{{ $ticket->status }}</p>
@@ -49,27 +58,25 @@
                 <p class="mb-0">Исполнитель</p>
             </div>
             <div class="col-sm-9">
-                <p class="text-muted mb-0">
-                    @if ($ticket->owner)
-                    {{ $ticket->owner->name }}
-                    @else
-                <form action="" method="post">
+                @if ( $ticket->owner_id)
+                {{ $ticket->owner->name }}
+                @else
+                <form action="{{ route('agent-accept-ticket-in-work', $ticket) }}" method="post">
                     @csrf
-                    <button type="button" class="btn btn-sm btn-outline-dark">Принять в работу</button>
+                    <input type="submit" class="btn btn-sm btn-outline-dark" value="Принять в работу">
                 </form>
                 <hr>
-                <form action="" method="post">
+                <form action="{{ route('agent-accept-ticket-in-work', $ticket) }}" method="post">
                     @csrf
-                    <select name="" id="">
+                    <select name="agent" id="agent">
                         <option selected disabled>Выберите сотрудника</option>
                         @foreach ($agents as $a)
                         <option value="{{ $a->id }}">{{$a->name}}</option>
                         @endforeach
                     </select>
-                    <button type="button" class="btn btn-sm btn-outline-dark">Назначить</button>
+                    <input type="submit" class="btn btn-sm btn-outline-dark" value="Назначить">
                 </form>
                 @endif
-                </p>
             </div>
         </div>
         <hr>
@@ -107,12 +114,32 @@
     @endforeach
 </ul>
 
+@if($ticket->status != app\Enums\TicketStatus::Close)
 <div class="form-outline">
     <form class="mb-3" method="post">
         @csrf
         <textarea class="form-control mb-3" rows="4"></textarea>
         <button type="button" class="btn btn-outline-dark">Отправить</button>
     </form>
+</div>
+@endif
+
+<div class="modal fade" id="exampleModalCenteredScrollable" tabindex="-1" aria-labelledby="exampleModalCenteredScrollableTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenteredScrollableTitle">Закрыть заявку</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ route('agent-close-ticket', $ticket) }}" method="post">
+                    @csrf
+                    <textarea class="form-control mb-3" rows="4" name="text"></textarea>
+                    <input class="btn btn-primary" type="submit" value="Закрыть заявку">
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
 
 @endsection

@@ -5,10 +5,10 @@ namespace App\Http\Requests\agent\ticket;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class CloseTicketRequest extends FormRequest
+class AcceptInWorkRequest extends FormRequest
 {
 
-    public $text;
+    public $agent;
 
     /**
      * Determine if the user is authorized to make this request.
@@ -26,7 +26,7 @@ class CloseTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'text' => 'nullable|string'
+            'agent' => 'nullable|integer'
         ];
     }
 }

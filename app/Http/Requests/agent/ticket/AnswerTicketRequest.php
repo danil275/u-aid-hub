@@ -3,15 +3,18 @@
 namespace App\Http\Requests\agent\ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class AnswerTicketRequest extends FormRequest
 {
+    public $text;
+
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return Gate::allows('agent', auth()->user());
     }
 
     /**
@@ -22,7 +25,7 @@ class AnswerTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'text' => 'string'
         ];
     }
 }

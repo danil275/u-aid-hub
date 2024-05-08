@@ -5,9 +5,18 @@
 
             </a>
 
-            @can('agent')
+            @auth
+
+            @if(auth()->user()->roles()->where('name', App\Enums\AppRole::Agent)->count() > 0)
             @include('layouts.agent-nav')
-            @endcan
+            @endif
+
+            @if(auth()->user()->roles()->where('name', App\Enums\AppRole::Client)->count() > 0)
+            @include('layouts.client-nav')
+            @endif
+
+            @endauth
+
 
             @guest
             @include('layouts.default-nav')
@@ -18,7 +27,7 @@
                 <a href="{{ route('login') }}"><button type="button" class="btn btn-outline-light me-2">Войти</button></a>
             </div>
             @endguest
-            
+
             @auth
             <div class="dropdown text-end">
                 <a href="#" class="d-block text-decoration-none dropdown-toggle link-light" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">

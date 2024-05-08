@@ -3,6 +3,7 @@
 namespace App\Http\Requests\client\ticket;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class CreateTicketRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class CreateTicketRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('client', auth()->user());
     }
 
     /**
@@ -22,7 +23,8 @@ class CreateTicketRequest extends FormRequest
     public function rules(): array
     {
         return [
-            
+            'title' => 'required|max:50',
+            'text' => 'required|max:300',
         ];
     }
 }

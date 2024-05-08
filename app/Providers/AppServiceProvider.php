@@ -38,7 +38,8 @@ class AppServiceProvider extends ServiceProvider
         });
         Gate::define("client", function (User $user) {
             return $user->roles()
-                ->where("name", AppRole::Agent)
+                ->where("name", AppRole::Client)
+                ->orWhere("name", AppRole::Agent)
                 ->orWhere("name", AppRole::Admin)->count() > 0;
         });
     }

@@ -16,7 +16,7 @@ Route::controller(LoginController::class)
     ->group(function () {
         Route::get('/login', 'login')->name('login');
         Route::post('/login', 'authenticate')->name('authenticate');
-        Route::get('/logout', 'logout')->name('logout');
+        Route::get('/logout', 'logout')->name('logout')->middleware('auth');
     });
 
 Route::controller(AnonymousTicketController::class)
@@ -26,41 +26,45 @@ Route::controller(AnonymousTicketController::class)
         Route::post('/', 'store');
     });
 
-Route::prefix('agent')
-    ->group(function () {
-        Route::get('/', function () {
-            return view('agent.index');
-        })->name('agent-index');
-        Route::controller(AgentTicketController::class)
-            ->prefix('tickets')
-            ->group(function () {
-                Route::get('/', 'index')->name('agent-tickets');
-                Route::get('/{ticket}', 'show')->name('agent-show-ticket');
-                Route::post('/{ticket}', 'answer')->name('agent-answer-ticket');
-                Route::post('/{ticket}', 'close')->name('agent-close-ticket');
-                Route::get('/new', 'create')->name('agent-create-ticket');
-            });
-    });
+Route::group(['middleware' => 'auth'], function () {
+    Route::prefix('agent')
+        ->group(function () {
+            Route::get('/', function () {
+                return view('agent.index');
+            })->name('agent-index');
+            Route::controller(AgentTicketController::class)
+                ->prefix('tickets')
+                ->group(function () {
+                    Route::get('/', 'index')->name('agent-tickets');
+                    Route::get('/{ticket}', 'show')->name('agent-show-ticket');
+                    Route::post('/{ticket}/answer', 'answer')->name('agent-answer-ticket');
+                    Route::post('/{ticket}/close', 'close')->name('agent-close-ticket');
+                    Route::post('/{ticket}/accept', 'acceptInWork')->name('agent-accept-ticket-in-work');
+                    Route::get('/new', 'create')->name('agent-create-ticket');
+                });
+        });
 
-Route::prefix('client')
-    ->group(function () {
-        Route::controller(ClientTicketController::class)
-            ->prefix('tickets')
-            ->group(function () {
-                Route::get('/', 'index')->name('tickets');
-                Route::get('/{ticket}', 'show');
-                Route::get('/new', 'create');
-            });
-    });
+    Route::prefix('client')
+        ->group(function () {
+            Route::controller(ClientTicketController::class)
+                ->prefix('tickets')
+                ->group(function () {
+                    Route::get('/', 'index')->name('tickets');
+                    Route::get('/new', 'create')->name('client-create-ticket');
+                    Route::post('/new', 'store')->name('client-create-ticket');
+                    Route::get('/{ticket}', 'show')->name('client-show-ticket');
+                });
+        });
 
-Route::controller(UserController::class)
-    ->prefix('user')
-    ->group(function () {
-        Route::get('/', 'index')->name('user');
-    });
+    Route::controller(UserController::class)
+        ->prefix('user')
+        ->group(function () {
+            Route::get('/', 'index')->name('user');
+        });
 
-Route::controller(AdminController::class)
-    ->prefix('admin')
-    ->group(function () {
-        Route::get('/', 'index')->name('admin');
-    });
+    Route::controller(AdminController::class)
+        ->prefix('admin')
+        ->group(function () {
+            Route::get('/', 'index')->name('admin');
+        });
+});

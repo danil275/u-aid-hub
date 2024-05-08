@@ -4,32 +4,30 @@
 @section('content')
 <h2>Новая заявка</h2>
 
-<form>
+<form class="md-3" action="{{ route('client-create-ticket') }}" method="post">
+    @csrf
     <div class="mb-3">
-        <label for="email" class="form-label">Электронная почта</label>
-        <input type="email" class="form-control" id="email" name="email">
-    </div>
-    <div class="mb-3">
-        <label for="theme" class="form-label">Тема</label>
-        <input class="form-control" list="themeDatalist" id="theme" placeholder="">
-        <datalist id="themeDatalist">
+        <label for="title" class="form-label">Тема</label>
+        <input class="form-control @error('title') is-invalid @enderror" list="titleDatalist" id="title" name="title" placeholder="" value="{{ old('title') }}">
+        <datalist id="titleDatalist">
             <option value="">
         </datalist>
+        @error('title')
+        <div class="invalid-feedback display: block;">
+            {{ $message }}
+        </div>
+        @enderror
     </div>
     <div class="mb-3">
         <label for="text" class="form-label">Опишите проблему</label>
-        <textarea class="form-control" id="text" name="text" rows="3"></textarea>
+        <textarea class="form-control @error('text') is-invalid @enderror" id="text" name="text" rows="3">{{ old('text') }}</textarea>
+        @error('text')
+        <div class="invalid-feedback display: block;">
+            {{ $message }}
+        </div>
+        @enderror
     </div>
     <button type="submit" class="btn btn-primary">Отправить</button>
 </form>
 
-@if ($errors->any())
-<div class="alert alert-danger">
-    <ul>
-        @foreach ($errors->all() as $error)
-        <li>{{ $error }}</li>
-        @endforeach
-    </ul>
-</div>
-@endif
 @endsection
