@@ -45,7 +45,7 @@
     <li class="d-flex justify-content-between mb-4">
         <div class="card w-100">
             <div class="card-header d-flex justify-content-between p-3">
-                <p class="fw-bold mb-0">{{ $ticket->email }}</p>
+                <p class="fw-bold mb-0">Клиент</p>
                 <p class="text-muted small mb-0"><i class="far fa-clock"></i>{{ $ticket->escalation_time->format('d.m.Y H:m') }}</p>
             </div>
             <div class="card-body">
@@ -62,7 +62,7 @@
                 @if(isset($m->user->email))
                 <p class="fw-bold mb-0">{{ $m->user->email }}</p>
                 @else
-                <p class="fw-bold mb-0">{{ $ticket->email }}</p>
+                <p class="fw-bold mb-0">Клиент</p>
                 @endif
                 <p class="text-muted small mb-0"><i class="far fa-clock"></i>{{$m->created_at->format('d.m.Y H:m')}}</p>
             </div>
@@ -75,15 +75,5 @@
     </li>
     @endforeach
 </ul>
-
-@if($ticket->status != app\Enums\TicketStatus::Close)
-<div class="form-outline">
-    <form class="mb-3" action="{{ route('agent-answer-ticket', $ticket) }}" method="post">
-        @csrf
-        <textarea name="text" class="form-control mb-3" rows="4"></textarea>
-        <input type="submit" class="btn btn-outline-dark" value="Отправить">
-    </form>
-</div>
-@endif
 
 @endsection

@@ -35,4 +35,11 @@ class AnonymousTicketController extends Controller
         return redirect()->route('home')
             ->with('success', "Заявка создана. Номер вашей заявки {$ticket->id}.");
     }
+
+    public function show(Ticket $ticket) {
+        if(!$ticket->is_anon) {
+            abort(403);
+        }
+        return view('client.ticket.show-anonymous-ticket', ['ticket' => $ticket]);
+    }
 }

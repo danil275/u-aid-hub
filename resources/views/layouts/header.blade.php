@@ -5,22 +5,10 @@
 
             </a>
 
-            @auth
-
-            @if(auth()->user()->roles()->where('name', App\Enums\AppRole::Agent)->count() > 0)
-            @include('layouts.agent-nav')
-            @endif
-
-            @if(auth()->user()->roles()->where('name', App\Enums\AppRole::Client)->count() > 0)
-            @include('layouts.client-nav')
-            @endif
-
-            @endauth
-
-
-            @guest
-            @include('layouts.default-nav')
-            @endguest
+            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                <li><a href="{{ route('home') }}" class="nav-link px-2 {{ Route::currentRouteNamed('home') ? 'text-secondary' : 'text-white' }}">Главная</a></li>
+                @can('admin')<li><a href="{{ route('admin') }}" class="nav-link px-2 {{ Route::currentRouteNamed('admin') ? 'text-secondary' : 'text-white' }}">Администрирование</a></li>@endcan
+            </ul>
 
             @guest
             <div class="text-end">

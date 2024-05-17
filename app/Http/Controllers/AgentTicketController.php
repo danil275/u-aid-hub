@@ -10,6 +10,7 @@ use App\Http\Requests\agent\ticket\CloseTicketRequest;
 use App\Models\Role;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Services\PaginationService;
 use App\Services\TicketService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,8 +18,6 @@ use Throwable;
 
 class AgentTicketController extends Controller
 {
-    const PAGINATE_PER_PAGE = 10;
-
     public function __construct(
         protected TicketService $ticketService
     ) {
@@ -27,9 +26,9 @@ class AgentTicketController extends Controller
     {
         $ticketsInWork = Ticket::where("owner_id", auth()->user()->id)
             ->whereNot('status', TicketStatus::Close)
-            ->paginate(self::PAGINATE_PER_PAGE, ["*"], 'ticketsInWorkPage');
+            ->paginate(PaginationService::getPerPage(), ["*"], 'ticketsInWorkPage');
         $ticketsInQueue = Ticket::where('status', TicketStatus::New)
-            ->paginate(self::PAGINATE_PER_PAGE, ['*'], 'ticketsInQueuePage');
+            ->paginate(PaginationService::getPerPage(), ['*'], 'ticketsInQueuePage');
         return view("agent.index", [
             'ticketsInWork' => $ticketsInWork,
             'ticketsInQueue' => $ticketsInQueue
@@ -77,6 +76,7 @@ class AgentTicketController extends Controller
     public function show(Ticket $ticket)
     {
         $agents = Role::where('name', AppRole::Agent)->first()->users;
+        $ticket->load('messages.user');
         return view('agent.ticket.show', ['ticket' => $ticket, 'agents' => $agents]);
     }
 
@@ -101,8 +101,7 @@ class AgentTicketController extends Controller
 
         try {
             $this->ticketService->answerToTicket($request->user(), $ticket, $validated['text']);
-            return redirect()->route('agent-show-ticket', ['ticket' => $ticket, 'agents' => $agents])
-                ->with('success', "");
+            return redirect()->route('agent-show-ticket', ['ticket' => $ticket, 'agents' => $agents]);
         } catch (Throwable $e) {
             throw $e;
         }

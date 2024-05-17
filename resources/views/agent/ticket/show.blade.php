@@ -101,12 +101,16 @@
     <li class="d-flex justify-content-between mb-4">
         <div class="card w-100">
             <div class="card-header d-flex justify-content-between p-3">
+                @if(isset($m->user->email))
+                <p class="fw-bold mb-0">{{ $m->user->email }}</p>
+                @else
                 <p class="fw-bold mb-0">{{ $ticket->email }}</p>
+                @endif
                 <p class="text-muted small mb-0"><i class="far fa-clock"></i>{{$m->created_at->format('d.m.Y H:m')}}</p>
             </div>
             <div class="card-body">
                 <p class="mb-0">
-                    {{ $ticket->text }}
+                    {{ $m->text }}
                 </p>
             </div>
         </div>
@@ -116,10 +120,10 @@
 
 @if($ticket->status != app\Enums\TicketStatus::Close)
 <div class="form-outline">
-    <form class="mb-3" method="post">
+    <form class="mb-3" action="{{ route('agent-answer-ticket', $ticket) }}" method="post">
         @csrf
-        <textarea class="form-control mb-3" rows="4"></textarea>
-        <button type="button" class="btn btn-outline-dark">Отправить</button>
+        <textarea name="text" class="form-control mb-3" rows="4"></textarea>
+        <input type="submit" class="btn btn-outline-dark" value="Отправить">
     </form>
 </div>
 @endif

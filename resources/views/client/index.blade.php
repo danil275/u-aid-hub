@@ -8,6 +8,9 @@
 <h2>
     Заявки
 </h2>
+<a href="{{ route('client-create-ticket') }}">
+    <button type="button" class="btn btn-outline-dark">Оставить заявку</button>
+</a>
 <table class="table table-striped table-hover">
     <thead>
         <tr>
@@ -30,6 +33,7 @@
         @endforeach
     </tbody>
 </table>
+<div class="d-flex justify-content-center">{{ $tickets->links() }}</div>
 
 
 @endsection

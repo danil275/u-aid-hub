@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\client\ticket\CreateTicketRequest;
 use App\Models\Ticket;
 use App\Models\User;
+use App\Services\PaginationService;
 use App\Services\TicketService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ class ClientTicketController extends Controller
     public function index()
     {
         return view("client.index", [
-            'tickets' => Ticket::where("client_id", auth()->user()->id)->paginate(self::PAGINATE_PER_PAGE)
+            'tickets' => Ticket::where("client_id", auth()->user()->id)->paginate(PaginationService::getPerPage())
         ]);
     }
 

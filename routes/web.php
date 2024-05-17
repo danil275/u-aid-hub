@@ -1,16 +1,17 @@
 <?php
 
+use App\Enums\AppRole;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AgentTicketController;
 use App\Http\Controllers\AnonymousTicketController;
 use App\Http\Controllers\ClientTicketController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
+use App\Http\Middleware\EnsureUserHasRole;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+Route::get('/', [HomeController::class, 'home'])->name('home');
 
 Route::controller(LoginController::class)
     ->group(function () {
@@ -20,14 +21,22 @@ Route::controller(LoginController::class)
     });
 
 Route::controller(AnonymousTicketController::class)
-    ->prefix('new')
+    ->prefix('ticket')
     ->group(function () {
-        Route::get('/', 'create')->name('new-anonymous-ticket');
-        Route::post('/', 'store');
+        Route::prefix('new')->group(
+            function () {
+                Route::get('/', 'create')->name('new-anonymous-ticket');
+                Route::post('/', 'store');
+            }
+        );
+
+        Route::get('/{ticket}', 'show')->name('show-anonymous-ticket');
     });
 
 Route::group(['middleware' => 'auth'], function () {
+
     Route::prefix('agent')
+        ->middleware([EnsureUserHasRole::class . ':' . AppRole::Agent->value])
         ->group(function () {
             Route::get('/', function () {
                 return view('agent.index');
@@ -45,6 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
     Route::prefix('client')
+        ->middleware([EnsureUserHasRole::class . ':' . AppRole::Client->value])
         ->group(function () {
             Route::controller(ClientTicketController::class)
                 ->prefix('tickets')
@@ -63,6 +73,7 @@ Route::group(['middleware' => 'auth'], function () {
         });
 
     Route::controller(AdminController::class)
+        ->middleware([EnsureUserHasRole::class . ':' . AppRole::Admin->value])
         ->prefix('admin')
         ->group(function () {
             Route::get('/', 'index')->name('admin');
