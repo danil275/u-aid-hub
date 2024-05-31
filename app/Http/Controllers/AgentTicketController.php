@@ -22,25 +22,36 @@ class AgentTicketController extends Controller
         protected TicketService $ticketService
     ) {
     }
-    public function index()
+    public function index(Request $request)
     {
-        $ticketsInWork = Ticket::where("owner_id", auth()->user()->id)
-            ->whereNot('status', TicketStatus::Close)
-            ->paginate(PaginationService::getPerPage(), ["*"], 'ticketsInWorkPage');
-        $ticketsInQueue = Ticket::where('status', TicketStatus::New)
-            ->paginate(PaginationService::getPerPage(), ['*'], 'ticketsInQueuePage');
-        return view("agent.index", [
-            'ticketsInWork' => $ticketsInWork,
-            'ticketsInQueue' => $ticketsInQueue
+
+        $validated = $request->validate([
+            'id' => 'numeric',
+            'inWork' => 'boolean',
+            'status' => 'string'
         ]);
-    }
 
-    public function create()
-    {
-    }
+        $builder = Ticket::query();
 
-    public function store(Request $request)
-    {
+        if (isset($validated['id'])) {
+            $builder->where('id', '=', $validated['id']);
+        }
+
+        if (isset($validated['inWork'])) {
+            $builder->where("owner_id", auth()->user()->id);
+        }
+
+        if (isset($validated['status'])) {
+            $builder->where("status", $validated['status']);
+        } else {
+            $builder->whereNot('status', TicketStatus::Close);
+        }
+
+        $tickets = $builder->paginate(PaginationService::getPerPage());
+
+        return view("agent.index", [
+            'tickets' => $tickets
+        ]);
     }
 
     public function acceptInWork(Ticket $ticket, AcceptInWorkRequest $request)
