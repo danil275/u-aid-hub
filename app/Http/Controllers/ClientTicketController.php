@@ -13,8 +13,6 @@ use Illuminate\Support\Facades\Auth;
 class ClientTicketController extends Controller
 {
 
-    const PAGINATE_PER_PAGE = 10;
-
     public function __construct(
         protected TicketService $ticketService
     ) {

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Enums\AppRole;
 use App\Models\User;
+use App\Services\MailService;
 use App\Services\TicketService;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Gate;
@@ -16,8 +17,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind(MailService::class, function () {
+            return new MailService();
+        });
         $this->app->bind(TicketService::class, function () {
-            return new TicketService();
+            return new TicketService($this->app->make(MailService::class));
         });
     }
 

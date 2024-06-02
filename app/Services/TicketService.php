@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Mail;
 class TicketService
 {
 
+    public function __construct(protected MailService $mailService)
+    {
+    }
 
     public function createAnonymousTicket(string $email, string $title, string $text): Ticket
     {
@@ -31,7 +34,7 @@ class TicketService
         $ticket->status = TicketStatus::New;
         $ticket->save();
 
-        $this->sendMailAboutCreationNewTicket($ticket);
+        $this->mailService->creationNewTicket($ticket);
 
         return $ticket;
     }
@@ -47,21 +50,9 @@ class TicketService
         $ticket->status = TicketStatus::New;
         $ticket->save();
 
-        $this->sendMailAboutCreationNewTicket($ticket);
+        $this->mailService->creationNewTicket($ticket);
 
         return $ticket;
-    }
-
-    private function sendMailAboutCreationNewTicket(Ticket $ticket)
-    {
-        $agentRole = Role::where("name", AppRole::Agent)->first();
-        $agentsEmails = $agentRole->users()->get()->map(function (User $u) {
-            return $u->email;
-        });
-
-        Mail::to($agentsEmails)->send(new NewTicket($ticket));
-
-        Mail::to($ticket->email)->send(new NewTicketClient($ticket));
     }
 
     public function closeTicket(User $user, Ticket $ticket, ?string $text): void
@@ -76,17 +67,7 @@ class TicketService
 
     public function answerToTicket(User $user, Ticket $ticket, string $text): void
     {
-        // Сообщение отправил владелец
-        if ($ticket->email == $user->email) {
-            // Заявки назначен владелец
-            if ($ticket->owner() != null) {
-                Mail::to($ticket->owner()->get()->email)->send(new TicketAnswer($ticket, $text));
-            }
-        }
-        // Сообщение отправил агент
-        else {
-            Mail::to($ticket->email)->send(new TicketAnswer($ticket, $text));
-        }
+        $this->mailService->answerToTicket($ticket, $user, $text);
 
         $message = new Message();
         $message->text = $text;
